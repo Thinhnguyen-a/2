@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
-import openai
+from openai import OpenAI
 import os
 
 app = Flask(__name__)
 
-# Lấy API key từ biến môi trường
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Khởi tạo client OpenAI với API key từ biến môi trường
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route('/', methods=['GET'])
 def home():
@@ -17,21 +17,17 @@ def ask():
     data = request.get_json()
     if not data or 'question' not in data:
         print("⚠️ Thiếu trường 'question'")
-        return jsonify({'error': 'Missing "question" field'}), 400
+        return jsonify({'error': 'Missing \"question\" field'}), 400
 
     question = data['question']
     print(f"🧠 Câu hỏi nhận được: {question}")
 
-    if not openai.api_key:
-        print("❌ Thiếu API key")
-        return jsonify({'error': 'Missing OpenAI API key'}), 500
-
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": question}]
         )
-        answer = response['choices'][0]['message']['content']
+        answer = response.choices[0].message.content
         print(f"🤖 Trả lời: {answer}")
         return jsonify({'answer': answer})
     except Exception as e:
