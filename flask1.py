@@ -1,21 +1,31 @@
 from flask import Flask, request, jsonify
 import openai
+import os
 
 app = Flask(__name__)
-openai.api_key = "sk-..."  # ← Thay bằng API key của bạn
+
+# Lấy API key từ biến môi trường
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route('/ask', methods=['POST'])
 def ask():
     data = request.get_json()
-    question = data.get('question', '')
+    if not data or 'question' not in data:
+        return jsonify({'error': 'Missing "question" field'}), 400
 
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": question}]
-    )
+    question = data['question']
 
-    answer = response['choices'][0]['message']['content']
-    return jsonify({'answer': answer})
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": question}]
+        )
+        answer = response['choices'][0]['message']['content']
+        return jsonify({'answer': answer})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
+# Mở cổng cho Render
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
