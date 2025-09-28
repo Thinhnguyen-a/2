@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL_NAME = "gpt-oss-20b"  # Đổi tại đây nếu cần
+MODEL_NAME = "openai/gpt-oss-20b"  # Đổi tại đây nếu cần
 
 @app.route('/', methods=['GET'])
 def home():
@@ -26,7 +26,7 @@ def ask():
     }
 
     payload = {
-        "model": "gpt-oss-20b",
+        "model": MODEL_NAME,
         "messages": [{"role": "user", "content": question}]
     }
 
