@@ -18,7 +18,7 @@ def ask():
     question = data.get('question')
 
     if not question:
-        return jsonify({'error': 'Thiếu trường "question"'}), 400
+        return jsonify({'error': 'Thiếu trường \"question\"'}), 400
 
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -26,8 +26,7 @@ def ask():
     }
 
     payload = {
-        "model": "gpt-oss-20b"
-
+        "model": "gpt-oss-20b",
         "messages": [{"role": "user", "content": question}]
     }
 
@@ -35,7 +34,7 @@ def ask():
         response = requests.post(GROQ_API_URL, headers=headers, json=payload)
         result = response.json()
 
-        # Nếu có lỗi từ Groq
+        # Nếu Groq trả về lỗi
         if "error" in result:
             return jsonify({
                 'error': 'Groq trả về lỗi',
