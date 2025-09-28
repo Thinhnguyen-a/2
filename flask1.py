@@ -26,7 +26,8 @@ def ask():
     }
 
     payload = {
-        "model": MODEL_NAME,
+        "model": "gpt-oss-20b"
+
         "messages": [{"role": "user", "content": question}]
     }
 
