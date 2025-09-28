@@ -25,7 +25,8 @@ def ask():
     }
 
     payload = {
-        "model": "llama3-8b-8192",
+        "model": "gemma-7b-it",
+
         "messages": [{"role": "user", "content": question}]
     }
 
