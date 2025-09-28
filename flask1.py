@@ -1,11 +1,7 @@
 from flask import Flask, request, jsonify
-from openai import OpenAI
 import os
 
 app = Flask(__name__)
-
-# Khởi tạo client OpenAI với API key từ biến môi trường
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route('/', methods=['GET'])
 def home():
@@ -13,28 +9,16 @@ def home():
 
 @app.route('/ask', methods=['POST'])
 def ask():
-    print("📥 Nhận yêu cầu POST /ask")
     data = request.get_json()
-    if not data or 'question' not in data:
-        print("⚠️ Thiếu trường 'question'")
-        return jsonify({'error': 'Missing \"question\" field'}), 400
+    question = data.get('question')
 
-    question = data['question']
-    print(f"🧠 Câu hỏi nhận được: {question}")
+    if not question:
+        return jsonify({'error': 'Thiếu trường \"question\"'}), 400
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": question}]
-        )
-        answer = response.choices[0].message.content
-        print(f"🤖 Trả lời: {answer}")
-        return jsonify({'answer': answer})
-    except Exception as e:
-        print(f"❌ Lỗi khi gọi OpenAI: {e}")
-        return jsonify({'error': str(e)}), 500
+    # Trả về phản hồi giả lập
+    fake_answer = f"Bạn vừa hỏi: \"{question}\". Đây là phản hồi giả lập từ AI."
+    return jsonify({'answer': fake_answer})
 
-# Mở cổng cho Render
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
