@@ -32,8 +32,15 @@ def ask():
     try:
         response = requests.post(GROQ_API_URL, headers=headers, json=payload)
         result = response.json()
-        answer = result["choices"][0]["message"]["content"]
-        return jsonify({'answer': answer})
+
+        # Kiểm tra phản hồi có "choices" không
+        if "choices" in result and len(result["choices"]) > 0:
+            answer = result["choices"][0]["message"]["content"]
+            return jsonify({'answer': answer})
+        else:
+            # Trả về toàn bộ phản hồi lỗi từ Groq để dễ debug
+            return jsonify({'error': 'Phản hồi không hợp lệ từ Groq', 'raw': result}), 500
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
