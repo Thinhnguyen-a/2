@@ -25,7 +25,7 @@ def ask():
     }
 
     payload = {
-        "model": "llama3-70b-8192",
+        "model": "gpt-oss-20b",
 
         "messages": [{"role": "user", "content": question}]
     }
